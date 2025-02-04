@@ -1,0 +1,35 @@
+use ieee.numeric_std.all;
+
+entity clkdiv is
+    Port ( clk : in  STD_LOGIC;
+           rst : in  STD_LOGIC;
+           clk_out : out  STD_LOGIC);
+end clkdiv;
+-- 50MHz to 2Hz
+architecture to2Hz of clkdiv is
+
+	signal count : integer :=0;
+	signal tmp : std_logic :='0';
+
+begin
+	process(rst,clk)
+	begin
+		
+		if (rst ='0') then
+			count <= 0;
+			tmp <= '0';
+		elsif (rising_edge(clk)) then
+			count <= count + 1;
+			if (count = 12499999) then
+				count <= 0;
+				tmp <= not tmp;
+			else
+				count <= count + 1;
+				tmp <= tmp;
+			end if;
+		end if;
+	
+	clk_out <= tmp;
+	end process;
+
+end to2Hz;
