@@ -1,0 +1,31 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+entity fulladder_b is
+    Port ( input : in  STD_LOGIC_VECTOR (2 downto 0);
+           sum : out  STD_LOGIC;
+           c_out : out  STD_LOGIC);
+end fulladder_b;
+
+architecture Behavioral of fulladder_b is
+
+begin
+--- sum
+	process (input)
+	begin
+		if (input="001" or input="010" or input="100" or input="111") then
+			sum <='1';
+		else sum <='0';
+		end if;
+	end process;
+	
+--- c_out
+	process(input)
+	begin
+		if (input="011" or input="101" or input="110" or input="111") then
+			c_out <='1';
+		else c_out <='0';
+		end if;
+	end process;
+
+end Behavioral;
