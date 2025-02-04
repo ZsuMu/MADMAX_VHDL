@@ -1,0 +1,36 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+entity Seven_segments is
+    Port ( x : in  STD_LOGIC_vector (3 downto 0);
+           output : out  STD_LOGIC_VECTOR (6 downto 0));
+end Seven_segments;
+
+architecture Behavioral of Seven_segments is
+
+begin
+	process(x)
+	begin
+		case x is							
+										-- active high
+			when "0000" => output <= "1111110"; -- 0
+			when "0001" => output <= "1001111"; -- 1
+			when "0010" => output <= "1101101"; -- 2
+			when "0011" => output <= "1111001"; -- 3
+			when "0100" => output <= "0110011"; -- 4
+			when "0101" => output <= "1011011"; -- 5
+			when "0110" => output <= "1011111"; -- 6
+			when "0111" => output <= "1110010"; -- 7
+			when "1000" => output <= "1111111"; -- 8
+			when "1001" => output <= "1111011"; -- 9
+			when "1010" => output <= "1110111"; -- A
+			when "1011" => output <= "0011111"; -- B
+			when "1100" => output <= "1000110"; -- C
+			when "1101" => output <= "0111101"; -- D
+			when "1110" => output <= "1001110"; -- E
+			when "1111" => output <= "1000111"; -- F
+			when others => output <= "0000000"; -- when not in case
+															
+		end case;
+	end process;
+end Behavioral;
