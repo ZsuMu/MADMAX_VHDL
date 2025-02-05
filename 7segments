@@ -12,7 +12,7 @@ begin
 	process(x)
 	begin
 		case x is							
-										-- active high
+				-- active high a to g
 			when "0000" => output <= "1111110"; -- 0
 			when "0001" => output <= "1001111"; -- 1
 			when "0010" => output <= "1101101"; -- 2
