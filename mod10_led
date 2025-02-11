@@ -1,0 +1,49 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+entity Mod10_Counter is
+    Port(
+        clk     : in  STD_LOGIC;
+        rst     : in  STD_LOGIC;
+        led     : out STD_LOGIC_VECTOR (3 downto 0)
+    );
+end Mod10_Counter;
+
+architecture Behavioral of Mod10_Counter is
+
+    signal count : STD_LOGIC_VECTOR (3 downto 0) := "0000";
+    signal count2 : integer := 0;
+    signal tmp : std_logic := '0';
+
+begin
+    process(clk, rst)
+    begin
+        if rst = '0' then
+            count2 <= 0;
+            tmp <= '0';
+        elsif rising_edge(clk) then
+            count2 <= count2 + 1;
+            if (count2 = 12499999) then
+                count2 <= 0;
+                tmp <= not tmp;
+            end if;
+        end if;
+    end process;
+
+    process(tmp, rst)
+    begin
+        if rst = '0' then
+            count <= "0000";
+        elsif rising_edge(tmp) then
+            if count = "1001" then
+                count <= "0000"; 
+            else
+                count <= std_logic_vector(unsigned(count) + 1);
+            end if;
+        end if;
+    end process;
+
+    led <= count;
+
+end Behavioral;
