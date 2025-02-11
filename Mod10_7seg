@@ -1,0 +1,70 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+entity Seven_segments is
+    Port(
+        clk     : in  STD_LOGIC;
+        rst     : in  STD_LOGIC;
+        output  : out STD_LOGIC_VECTOR (7 downto 0)
+    );
+end Seven_segments;
+
+architecture Behavioral of Seven_segments is
+
+    signal count : STD_LOGIC_VECTOR (3 downto 0) := "0000";
+    signal count2 : integer :=0;
+	signal tmp : std_logic :='0';
+
+    signal slow_clk : STD_LOGIC := '0';
+
+begin
+    process(clk, rst)
+    begin
+        if rst = '0' then
+            count2 <= 0;
+            tmp <= '0';
+        elsif rising_edge(clk) then
+            count2 <= count2 + 1;
+            if (count2 = 12499999) then
+                count2 <= 0;
+                tmp <= not tmp;
+            else
+                count2 <= count2 +1;
+                tmp <= tmp;
+      
+            end if;
+        end if;
+    end process;
+
+    process(tmp, rst)
+    begin
+        if rst = '0' then
+            count <= "0000";
+        elsif rising_edge(tmp) then
+            if count = "1001" then
+                count <= "0000"; 
+            else
+                count <= std_logic_vector(unsigned(count) + 1);
+            end if;
+        end if;
+    end process;
+
+    process(count)
+    begin
+        case count is
+            when "0000" => output <= "01111110"; -- 0
+            when "0001" => output <= "01001111"; -- 1
+            when "0010" => output <= "01101101"; -- 2
+            when "0011" => output <= "01111001"; -- 3
+            when "0100" => output <= "00110011"; -- 4
+            when "0101" => output <= "01011011"; -- 5
+            when "0110" => output <= "01011111"; -- 6
+            when "0111" => output <= "01110010"; -- 7
+            when "1000" => output <= "01111111"; -- 8
+            when "1001" => output <= "01111011"; -- 9
+            when others => output <= "00000000"; -- Default case
+        end case;
+    end process;
+
+end Behavioral;
