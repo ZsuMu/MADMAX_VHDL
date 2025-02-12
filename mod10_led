@@ -1,49 +1,57 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.NUMERIC_STD.ALL;
+use ieee.numeric_std.all;
 
-entity Mod10_Counter is
-    Port(
-        clk     : in  STD_LOGIC;
-        rst     : in  STD_LOGIC;
-        led     : out STD_LOGIC_VECTOR (3 downto 0)
-    );
-end Mod10_Counter;
+entity mod10_2Hz is
+    Port ( clk : in  STD_LOGIC;
+           rst : in  STD_LOGIC;
+		   Hz  : out std_logic; 
+           led : out STD_LOGIC_VECTOR (3 downto 0));
+			  
+end mod10_2Hz;
 
-architecture Behavioral of Mod10_Counter is
+architecture Behavioral of mod10_2Hz is
 
-    signal count : STD_LOGIC_VECTOR (3 downto 0) := "0000";
-    signal count2 : integer := 0;
-    signal tmp : std_logic := '0';
+	signal count1 	: integer :=0;
+	signal count2 	: std_logic_vector(3 downto 0) :="0000" ;
+	signal tmp		: std_logic :='0';
 
 begin
-    process(clk, rst)
-    begin
-        if rst = '0' then
-            count2 <= 0;
-            tmp <= '0';
-        elsif rising_edge(clk) then
-            count2 <= count2 + 1;
-            if (count2 = 12499999) then
-                count2 <= 0;
-                tmp <= not tmp;
-            end if;
-        end if;
-    end process;
-
-    process(tmp, rst)
-    begin
-        if rst = '0' then
-            count <= "0000";
-        elsif rising_edge(tmp) then
-            if count = "1001" then
-                count <= "0000"; 
-            else
-                count <= std_logic_vector(unsigned(count) + 1);
-            end if;
-        end if;
-    end process;
-
-    led <= count;
-
+	
+	div : process(clk,rst,count1,tmp)
+	begin
+	
+		if (rst='0') then
+			count1 <= 0;
+			tmp <= '0';
+		elsif(rising_edge(clk)) then
+			count1 <= count1 + 1;
+			if (count1 = 12499999) then
+				count1 <= 0;
+				tmp <= not tmp;
+			else
+				count1 <= count1 +1;
+				tmp <= tmp;
+			end if;
+		end if;
+	end process;
+	
+	Hz <= tmp;
+	
+	mod10 : process(tmp,rst,count2)
+	begin
+	
+		if( rst ='0') then
+			count2 <= "0000";
+		elsif(rising_edge(tmp)) then
+			if (count2 = "1001") then
+				count2 <= "0000";
+			else
+				count2 <= std_logic_vector(unsigned(count2) +1);
+			end if;
+		end if;
+	end process;
+	
+	led <= count2;
+	
 end Behavioral;
