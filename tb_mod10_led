@@ -1,0 +1,55 @@
+LIBRARY ieee;
+USE ieee.std_logic_1164.ALL;
+ 
+ENTITY tb_mod10_2hz IS
+END tb_mod10_2hz;
+ 
+ARCHITECTURE behavior OF tb_mod10_2hz IS 
+ 
+    COMPONENT mod10_2Hz
+    PORT(
+         clk : IN  std_logic;
+         rst : IN  std_logic;
+         Hz : OUT  std_logic;
+         led : OUT  std_logic_vector(3 downto 0)
+        );
+    END COMPONENT;
+    
+   --Inputs
+   signal clk : std_logic := '0';
+   signal rst : std_logic := '0';
+
+ 	--Outputs
+   signal Hz : std_logic;
+   signal led : std_logic_vector(3 downto 0);
+
+   -- Clock period definitions
+   constant clk_period : time := 20 ns;
+ 
+BEGIN
+
+   uut: mod10_2Hz PORT MAP (
+          clk => clk,
+          rst => rst,
+          Hz => Hz,
+          led => led
+        );		  
+   clk_process :process
+   begin
+		clk <= '0';
+		wait for clk_period/2;
+		clk <= '1';
+		wait for clk_period/2;
+   end process;
+
+   -- Stimulus process
+   stim_proc: process
+   begin
+	
+		wait for 250 ms;
+		rst<='1';
+	  
+		wait;
+   end process;
+
+END;
