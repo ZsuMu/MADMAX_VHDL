@@ -5,7 +5,7 @@ use ieee.numeric_std.all;
 entity mod10_2Hz is
     Port ( clk : in  STD_LOGIC;
            rst : in  STD_LOGIC;
-	   Hz  : out std_logic; 
+	   Hz  : out std_logic; -- I mean 2Hz
            led : out STD_LOGIC_VECTOR (3 downto 0));
 			  
 end mod10_2Hz;
