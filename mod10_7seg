@@ -1,0 +1,84 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use ieee.numeric_std.all;
+
+entity SevenSeg is
+    Port ( clk : in  STD_LOGIC;
+           rst : in  STD_LOGIC;
+           Hz : out  STD_LOGIC;
+			  DigitA : out  STD_LOGIC;
+			  DigitB : out  STD_LOGIC;
+			  DigitC : out  STD_LOGIC;
+			  DigitD : out  STD_LOGIC;
+			  DigitE : out  STD_LOGIC;
+			  DigitF : out  STD_LOGIC;
+           Seven : out  STD_LOGIC_VECTOR (7 downto 0));
+			  
+end SevenSeg;
+architecture Behavioral of SevenSeg is
+	
+	signal count1 	: integer :=0;
+	signal count2 	: std_logic_vector(3 downto 0) :="0000" ;
+	signal tmp		: std_logic :='0';
+
+begin
+	
+	div : process(clk,rst,count1,tmp)
+	begin
+	
+		if (rst='0') then
+			count1 <= 0;
+			tmp <= '0';
+		elsif(rising_edge(clk)) then
+			count1 <= count1 + 1;
+			if (count1 = 12499999) then
+				count1 <= 0;
+				tmp <= not tmp;
+			else
+				count1 <= count1 +1;
+				tmp <= tmp;
+			end if;
+		end if;
+	end process;
+
+	Hz <= tmp;
+	
+	mod10 : process(tmp,rst,count2)
+	begin
+	
+		if( rst ='0') then
+			count2 <= "0000";
+		elsif(rising_edge(tmp)) then
+			if (count2 = "1001") then
+				count2 <= "0000";
+			else
+				count2 <= std_logic_vector(unsigned(count2) +1);
+			end if;
+		end if;
+	end process;
+	
+	SevenSeg : process(count2)
+    begin
+        case count2 is
+            when "0000" => Seven <= "11000000"; -- 0
+            when "0001" => Seven <= "11111001"; -- 1
+            when "0010" => Seven <= "10100100"; -- 2
+            when "0011" => Seven <= "10110000"; -- 3
+				when "0100" => Seven <= "10011001"; -- 4
+            when "0101" => Seven <= "10010010"; -- 5
+            when "0110" => Seven <= "10000010"; -- 6
+            when "0111" => Seven <= "11111000"; -- 7
+            when "1000" => Seven <= "10000000"; -- 8
+            when "1001" => Seven <= "10010000"; -- 9
+            when others => Seven <= "11111111"; -- Default case
+        end case;
+    end process;
+
+    DigitA <='0';
+		DigitB <='1';
+		DigitC <='1';
+		DigitD <='1';
+		DigitE <='1';
+		DigitF <='1';
+
+end Behavioral;
