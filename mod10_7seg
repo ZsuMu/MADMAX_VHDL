@@ -74,11 +74,11 @@ begin
         end case;
     end process;
 
-    DigitA <='0';
-		DigitB <='1';
-		DigitC <='1';
-		DigitD <='1';
-		DigitE <='1';
-		DigitF <='1';
+    	DigitA <='0';
+	DigitB <='1';
+	DigitC <='1';
+	DigitD <='1';
+	DigitE <='1';
+	DigitF <='1';
 
 end Behavioral;
