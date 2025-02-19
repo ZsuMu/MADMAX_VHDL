@@ -82,3 +82,23 @@ begin
 	DigitF <='1';
 
 end Behavioral;
+
+--Pin UCF
+net clk 	loc = T8;
+net rst 	loc = L3;
+
+net Seven[0] 	loc = C7;
+net Seven[1] 	loc = E6;
+net Seven[2] 	loc = C5;
+net Seven[3] 	loc = F7;
+net Seven[4] 	loc = D6;
+net Seven[5] 	loc = E7;
+net Seven[6] 	loc = D5;
+net Seven[7] 	loc = C6;
+
+net DigitA 	loc = D8;
+net DigitB 	loc = E8;
+net DigitC 	loc = F9;
+net DigitD 	loc = F10;
+net DigitE 	loc = E10;
+net DigitF 	loc = D9;
