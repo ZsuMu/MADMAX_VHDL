@@ -1,0 +1,128 @@
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use ieee.numeric_std.all;
+
+entity main is
+    Port ( 	clk : in  STD_LOGIC;
+           	rst : in  STD_LOGIC;
+           	Hz : out  STD_LOGIC;
+				Sel : out  STD_LOGIC_vector(3 downto 0);
+           	Seven : out  STD_LOGIC_VECTOR (7 downto 0));
+end main;
+
+architecture Behavioral of main is
+
+	signal countclk 	: integer :=0;
+	signal count : std_logic_vector(15 downto 0) := (others => '0');
+	signal tmp	: std_logic :='0';
+	signal led: STD_LOGIC_VECTOR (3 downto 0);
+	signal led_act: std_logic_vector(1 downto 0);
+	signal refresh_counter: STD_LOGIC_VECTOR (19 downto 0);
+
+	begin
+
+		div : process(clk,rst,countclk,tmp)
+		begin
+	
+			if (rst='0') then
+				countclk <= 0;
+				tmp <= '0';
+			elsif(rising_edge(clk)) then
+				if (countclk = 12499999) then
+					countclk <= 0;
+					tmp <= not tmp;
+				else
+					countclk <= countclk +1;
+					tmp <= tmp;
+				end if;
+			end if;
+		end process;
+
+	Hz <= tmp;
+	
+	mod10 : process(tmp,rst,count)
+	begin
+	
+		if( rst ='0') then
+			count <= "0000000000000000";
+		elsif(rising_edge(tmp)) then
+			if (count = "1001100110011001") then
+				count <= "0000000000000000";
+			else
+				count <= std_logic_vector(unsigned(count) + 1);
+				
+				if (count(3 downto 0) = "1001") then
+					count(3 downto 0) <= "0000";
+					
+					if (count(7 downto 4) = "1001") then
+						count(7 downto 4) <= "0000";
+						
+						if (count(11 downto 8) = "1001") then
+							count(11 downto 8) <= "0000";
+								
+								if (count(15 downto 12) = "1001") then
+									count(15 downto 12) <= "0000";
+								end if;
+						end if;
+					end if;
+				end if;
+			end if;
+		end if;
+    end process;
+	 
+	 SevenSeg : process(led)
+    begin
+        case led is
+            	when "0000" => Seven <= "11000000"; -- 0
+            	when "0001" => Seven <= "11111001"; -- 1
+            	when "0010" => Seven <= "10100100"; -- 2
+            	when "0011" => Seven <= "10110000"; -- 3
+					when "0100" => Seven <= "10011001"; -- 4
+					when "0101" => Seven <= "10010010"; -- 5
+            	when "0110" => Seven <= "10000010"; -- 6
+            	when "0111" => Seven <= "11111000"; -- 7
+            	when "1000" => Seven <= "10000000"; -- 8
+            	when "1001" => Seven <= "10010000"; -- 9
+            	when others => Seven <= "11111111"; -- Default case
+        end case;
+    end process;
+	 
+	process(clk,rst)
+	begin 
+		if(rst='0') then
+			refresh_counter <= (others => '0');
+		elsif(rising_edge(clk)) then
+			refresh_counter <= std_logic_vector(unsigned(refresh_counter) + 1);
+		end if;
+	end process;
+
+	led_act <= refresh_counter(19 downto 18);
+	 
+	mux : process(led_act) --mux for display
+	begin
+	
+    case led_act is
+	 when "11" =>
+        Sel <= "0111"; 
+        led <= count(15 downto 12);
+    when "10" =>
+        Sel <= "1011"; 
+        led <= count(11 downto 8);
+    when "01" =>
+        Sel <= "1101";   
+        led <= count(7 downto 4);    
+    when "00" =>
+        Sel <= "1110";
+		  led <= count(3 downto 0); 
+    
+	 when others =>
+        Sel <= "1111"; 
+        led <= count(3 downto 0);     
+    end case;
+	 
+end process;
+	 
+
+end Behavioral;
+
