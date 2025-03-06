@@ -5,7 +5,7 @@ use ieee.std_logic_unsigned.all;
 entity main is
     Port ( 	clk : in  STD_LOGIC;
            	rst : in  STD_LOGIC;
-          	Hz_2 : out  STD_LOGIC;	--check my new clock for div		
+          	--Hz_2 : out  STD_LOGIC;	--check my new clock for div		
 		
 		d_out : out STD_LOGIC_VECTOR (3 downto 0); --my led
 
@@ -49,7 +49,7 @@ architecture Behavioral of main is
 			end if;
 		end process;
 
-	Hz_2 <= tmp;
+	--Hz_2 <= tmp;
 	
 	mod10 : process(tmp,rst,count0,count1,count2,count3,count4,count5)
 	begin
@@ -165,11 +165,9 @@ architecture Behavioral of main is
 		
 		when others =>
 			Sel <= "111111";
-			--led <= count0;    
+			led <= count0;    
 		end case;
 	 
 end process;
-
-
 
 end Behavioral;
