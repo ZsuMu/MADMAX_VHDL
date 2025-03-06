@@ -171,3 +171,28 @@ architecture Behavioral of main is
 end process;
 
 end Behavioral;
+
+--pin
+net clk 	loc = T8;
+net rst 	loc = L3;
+
+net Seven[0] 	loc = C7;
+net Seven[1] 	loc = E6;
+net Seven[2] 	loc = C5;
+net Seven[3] 	loc = F7;
+net Seven[4] 	loc = D6;
+net Seven[5] 	loc = E7;
+net Seven[6] 	loc = D5;
+net Seven[7] 	loc = C6;
+
+net Sel[0] 	loc = D8;
+net Sel[1] 	loc = E8;
+net Sel[2] 	loc = F9;
+net Sel[3] 	loc = F10;
+net Sel[4] 	loc = E10;
+net Sel[5] 	loc = D9;
+
+net d_out[3] loc = P4;
+net d_out[2] loc = N5;
+net d_out[1] loc = P5;
+net d_out[0] loc = M6;
