@@ -1,0 +1,193 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use ieee.std_logic_unsigned.all;
+
+entity main is
+    Port ( 	clk : in  STD_LOGIC;
+           	rst : in  STD_LOGIC;
+          	--Hz_2 : out  STD_LOGIC;	--check my new clock for div		
+		
+				d_out : out STD_LOGIC_VECTOR (3 downto 0); --my led
+
+				Sel : out  STD_LOGIC_vector(5 downto 0);
+           	Seven : out  STD_LOGIC_VECTOR (7 downto 0));
+				
+end main;
+
+architecture Behavioral of main is
+
+	signal countclk 	: integer :=0;
+	signal countclk2 	: integer :=0;
+	
+	signal count0 : std_logic_vector(3 downto 0) := (others => '0');
+	signal count1 : std_logic_vector(3 downto 0) := (others => '0');
+	signal count2 : std_logic_vector(3 downto 0) := (others => '0');
+	signal count3 : std_logic_vector(3 downto 0) := (others => '0');
+	signal count4 : std_logic_vector(3 downto 0) := (others => '0');
+	signal count5 : std_logic_vector(3 downto 0) := (others => '0');
+	
+	signal tmp	: std_logic :='0';
+	signal tmp2	: std_logic :='0';
+	signal led: STD_LOGIC_VECTOR (3 downto 0);
+	signal led_act: std_logic_vector(2 downto 0);
+
+
+	begin
+
+		div : process(clk,rst,countclk,tmp)
+		begin
+	
+			if (rst='0') then
+				countclk <= 0;
+				tmp <= '0';
+			elsif(rising_edge(clk)) then
+				if (countclk = 12499999) then
+					countclk <= 0;
+					tmp <= not tmp;
+				else
+					countclk <= countclk +1;
+					tmp <= tmp;
+				end if;
+			end if;
+		end process;
+
+	--Hz_2 <= tmp;
+	
+	mod10 : process(tmp,rst,count0,count1,count2,count3,count4,count5)
+	begin
+	
+		if( rst ='0') then
+			count0 <= "0000";
+			count1 <= "0000";
+			count2 <= "0000";
+			count3 <= "0000";
+			count4 <= "0000";
+			count5 <= "0000";
+			
+		elsif(rising_edge(tmp)) then
+			if (count0 = "1001") then
+				count0  <= "0000";
+				
+				if (count1 = "1001") then
+					count1 <= "0000";
+					
+					if (count2 = "1001") then
+						count2 <= "0000";
+						
+						if (count3 = "1001") then
+							count3 <= "0000";
+							
+							if (count4 = "1001") then
+								count4 <= "0000";
+								
+								if (count5 = "1001") then
+									count5 <= "0000";
+								else
+									count5 <= count5 + 0;
+								end if;
+								
+							else
+								count4 <= count4 + 0;
+							end if;
+							
+						else
+							count3 <= count3 + 0;
+						end if;
+						
+					else
+						count2 <= count2 + 0;
+					end if;
+			
+				else
+					count1 <= count1 + 1;
+				end if;
+			else
+            count0 <= count0 + 1;
+			end if;
+			
+    end if;
+	 
+    end process;
+	 
+	 d_out <= count0; --my led 
+	 
+	 SevenSeg : process(led)
+    begin
+        case led is
+            	when "0000" => Seven <= "11000000"; -- 0
+            	when "0001" => Seven <= "11111001"; -- 1
+            	when "0010" => Seven <= "10100100"; -- 2
+            	when "0011" => Seven <= "10110000"; -- 3
+					when "0100" => Seven <= "10011001"; -- 4
+					when "0101" => Seven <= "10010010"; -- 5
+            	when "0110" => Seven <= "10000010"; -- 6
+            	when "0111" => Seven <= "11111000"; -- 7
+            	when "1000" => Seven <= "10000000"; -- 8
+            	when "1001" => Seven <= "10010000"; -- 9
+            	when others => Seven <= "11111111"; -- Default case
+        end case;
+    end process;
+	
+	div_sel : process(clk,rst,countclk2,tmp2) -- frequency of selcetor
+		begin
+	
+			if (rst='0') then
+				countclk2 <= 0;
+				tmp2 <= '0';
+			elsif(rising_edge(clk)) then
+				if (countclk2 = 249999) then --100Hz
+					countclk2 <= 0;
+					tmp2 <= not tmp2;
+				else
+					countclk2 <= countclk2 +1;
+					tmp2 <= tmp2;
+				end if;
+			end if;
+		end process;
+	
+	count_sel : process(rst,tmp2,led_act) -- change case
+		begin
+		
+			if(rst='0') then
+				led_act <= "000";
+				elsif(rising_edge(tmp2)) then
+					if(led_act = "001") then --main
+						led_act <= "000";
+					else
+						led_act <= led_act +1;
+					end if;
+			end if;
+		end process;
+	 
+	mux : process(led_act) --mux for display
+	begin
+	
+    case led_act is
+	 
+		when "000" =>
+			Sel <= "111110";
+			led <= count0;
+		when "001" =>
+			Sel <= "111101";
+			led <= count1;
+--		when "010" =>
+--			Sel <= "111011";
+--			led <= count2;
+--		--when "011" =>
+--			Sel <= "110111";
+--			led <= count3;
+--		--when "100" =>
+--			Sel <= "101111";
+--			led <= count4;
+--		--when "101" =>
+--			Sel <= "011111";
+--			led <= count5;
+		
+		when others =>
+			Sel <= "111111";
+			led <= count0;    
+		end case;
+	 
+end process;
+
+end Behavioral;
